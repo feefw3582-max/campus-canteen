@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>校园食堂 CampusCanteen</title>
+    <meta
+      name="description"
+      content="校园食堂交互原型：食堂人流、地图排队、校园评价、通知、统计和用餐小组。"
+    />
+    <meta name="theme-color" content="#fff8e7" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-panel">
+        <div class="brand-lockup">
+          <span class="brand-mark"><i data-lucide="map-pin"></i></span>
+          <div>
+            <p>CampusCanteen</p>
+            <h1>校园食堂</h1>
+          </div>
+        </div>
+
+        <nav class="rail-nav" aria-label="演示页面">
+          <button class="rail-item is-active" data-route="home" type="button">
+            <i data-lucide="home"></i>
+            <span>首页</span>
+          </button>
+          <button class="rail-item" data-route="map" type="button">
+            <i data-lucide="map"></i>
+            <span>地图</span>
+          </button>
+          <button class="rail-item" data-route="feed" type="button">
+            <i data-lucide="messages-square"></i>
+            <span>评价</span>
+          </button>
+          <button class="rail-item" data-route="people" type="button">
+            <i data-lucide="users"></i>
+            <span>人群</span>
+          </button>
+          <button class="rail-item" data-route="stats" type="button">
+            <i data-lucide="bar-chart-3"></i>
+            <span>统计</span>
+          </button>
+        </nav>
+
+        <section class="logic-card">
+          <p class="section-kicker">交互逻辑</p>
+          <h2>从“现在吃什么”到“怎么少排队”</h2>
+          <ul>
+            <li>首页呈现推荐菜、人流和热门餐品。</li>
+            <li>地图用状态点表达空闲、适中和拥挤。</li>
+            <li>通知把排队预警、订单更新和限量菜整合起来。</li>
+            <li>用餐小组把同伴、预约和路线串成一个决策闭环。</li>
+          </ul>
+        </section>
+      </aside>
+
+      <main class="phone-stage" aria-live="polite">
+        <section class="phone-frame">
+          <header class="app-header">
+            <button class="icon-btn ghost back-button" type="button" aria-label="返回">
+              <i data-lucide="chevron-left"></i>
+            </button>
+            <div class="title-wrap">
+              <span class="small-location"><i data-lucide="map-pin"></i> 工程楼</span>
+              <h2 id="screen-title">校园食堂</h2>
+            </div>
+            <div class="header-actions">
+              <button class="icon-btn" data-open="notifications" type="button" aria-label="通知中心">
+                <i data-lucide="bell"></i>
+              </button>
+              <button class="avatar-btn" data-open="profile" type="button" aria-label="个人中心">1</button>
+            </div>
+          </header>
+
+          <section class="screen is-active" data-screen="home">
+            <div class="search-box">
+              <i data-lucide="search"></i>
+              <input aria-label="搜索食堂或菜品" placeholder="搜索食堂或菜品..." />
+            </div>
+
+            <article class="hero-dish">
+              <img alt="清新藜麦碗" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80" />
+              <div class="hero-shade"></div>
+              <span>今日特价</span>
+              <h3>清新藜麦碗</h3>
+              <p>中央餐厅 · $8.50</p>
+              <button class="pill-button" data-route-target="canteen" type="button">立即查看</button>
+            </article>
+
+            <section class="content-section">
+              <div class="section-heading">
+                <h3>食堂人流量</h3>
+                <button class="text-button" data-route-target="map" type="button">查看地图</button>
+              </div>
+              <div class="flow-list" id="flow-list"></div>
+            </section>
+
+            <section class="content-section">
+              <div class="section-heading">
+                <h3>精选菜品</h3>
+                <button class="icon-btn green" data-action="shuffle-menu" type="button" aria-label="换一批">
+                  <i data-lucide="shuffle"></i>
+                </button>
+              </div>
+              <div class="dish-strip" id="dish-strip"></div>
+            </section>
+          </section>
+
+          <section class="screen" data-screen="feed">
+            <div class="segmented-tabs" id="feed-tabs"></div>
+            <div class="post-list" id="post-list"></div>
+          </section>
+
+          <section class="screen map-screen" data-screen="map">
+            <div class="map-canvas">
+              <div class="campus-grid"></div>
+              <button class="map-pin pin-red" data-open="reservation" style="--x: 64%; --y: 25%" type="button">
+                <span>拥挤</span>
+                <i data-lucide="utensils"></i>
+              </button>
+              <button class="map-pin pin-green" data-route-target="canteen" style="--x: 42%; --y: 46%" type="button">
+                <span>空闲</span>
+                <i data-lucide="coffee"></i>
+              </button>
+              <button class="map-pin pin-amber" data-route-target="canteen" style="--x: 73%; --y: 62%" type="button">
+                <span>适中</span>
+                <i data-lucide="soup"></i>
+              </button>
+              <button class="locate-button" type="button" aria-label="定位">
+                <i data-lucide="crosshair"></i>
+              </button>
+              <div class="canteen-preview">
+                <img alt="图书馆咖啡厅" src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=500&q=80" />
+                <div>
+                  <h3>图书馆咖啡厅</h3>
+                  <p><i data-lucide="navigation"></i> 250米 · B栋</p>
+                </div>
+                <span class="status-chip green">空闲</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="screen" data-screen="canteen">
+            <article class="detail-hero">
+              <img alt="绿台餐厅餐品" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80" />
+              <div class="detail-shade"></div>
+              <h3>绿台餐厅 (Green Terrace)</h3>
+              <p>营业至晚上8:00 · 4.8</p>
+            </article>
+
+            <div class="quick-grid two">
+              <article>
+                <span>预计等待</span>
+                <strong>5-8分钟</strong>
+              </article>
+              <article>
+                <span>人流状态</span>
+                <strong>较少</strong>
+              </article>
+            </div>
+
+            <section class="content-section">
+              <div class="section-heading">
+                <h3>实时人数</h3>
+                <span class="muted">基于午高峰五分钟趋势</span>
+              </div>
+              <div class="bar-chart" id="people-chart"></div>
+            </section>
+
+            <section class="content-section">
+              <div class="section-heading">
+                <h3>今日菜单</h3>
+                <button class="text-button" type="button">查看全部</button>
+              </div>
+              <div class="menu-list" id="menu-list"></div>
+            </section>
+
+            <article class="review-card">
+              <div class="stars">★★★★★</div>
+              <p>校内的性价比很高，推荐番茄藜麦碗。午高峰稍微排队，早点来体验更好。</p>
+              <span>Alex M. · 2小时前</span>
+            </article>
+          </section>
+
+          <section class="screen" data-screen="people">
+            <div class="search-row">
+              <div class="search-box compact">
+                <i data-lucide="search"></i>
+                <input aria-label="搜索资讯" placeholder="搜索食堂和菜品..." />
+              </div>
+              <button class="icon-btn green" type="button"><i data-lucide="sliders-horizontal"></i></button>
+            </div>
+
+            <section class="content-section">
+              <div class="chip-row">
+                <button class="chip is-active" type="button">全部资讯</button>
+                <button class="chip" type="button">安全</button>
+                <button class="chip" type="button">活动</button>
+                <button class="chip" type="button">菜品</button>
+                <button class="chip" data-route-target="groups" type="button">用餐小组</button>
+              </div>
+              <div class="info-list" id="info-list"></div>
+            </section>
+          </section>
+
+          <section class="screen" data-screen="groups">
+            <h2 class="page-title">用餐小组</h2>
+            <p class="lead-copy">与你的团队协调用餐并分享美食推荐。</p>
+            <div class="search-row">
+              <div class="search-box compact">
+                <i data-lucide="search"></i>
+                <input aria-label="搜索小组" placeholder="搜索小组..." />
+              </div>
+              <button class="square-add" data-action="create-group" type="button"><i data-lucide="plus"></i></button>
+            </div>
+            <div class="group-list" id="group-list"></div>
+            <article class="start-card">
+              <h3>创建小组？</h3>
+              <p>邀请 3 人的小组可享受食堂专属折扣。</p>
+              <button class="primary-button" data-action="create-group" type="button">立即开始</button>
+            </article>
+          </section>
+
+          <section class="screen" data-screen="stats">
+            <section class="stats-card">
+              <p class="section-kicker">用餐数据洞察</p>
+              <h3>月度流量报表</h3>
+              <div class="line-chart">
+                <svg viewBox="0 0 300 120" role="img" aria-label="日流量趋势图">
+                  <path class="grid-line" d="M8 96 H292 M8 66 H292 M8 36 H292" />
+                  <path class="trend-fill" d="M8 90 C40 76 55 82 78 70 C110 50 135 66 160 36 C188 7 212 40 232 63 C254 85 272 79 292 45 L292 112 L8 112 Z" />
+                  <path class="trend-line" d="M8 90 C40 76 55 82 78 70 C110 50 135 66 160 36 C188 7 212 40 232 63 C254 85 272 79 292 45" />
+                </svg>
+              </div>
+            </section>
+            <section class="stats-card">
+              <h3>高峰时段分析</h3>
+              <div class="orange-bars" id="peak-chart"></div>
+            </section>
+            <section class="stats-card">
+              <h3>餐厅受欢迎程度</h3>
+              <div class="ranking-list" id="ranking-list"></div>
+            </section>
+          </section>
+
+          <section class="screen reservation-screen" data-screen="reservation">
+            <article class="alert-detail">
+              <div class="alert-icon"><i data-lucide="triangle-alert"></i></div>
+              <div>
+                <h3>北广场拥挤</h3>
+                <p>占用率约 95%，预计下单和入座等待时间将超过 20 分钟。</p>
+                <span>高人流量 · 刚刚</span>
+              </div>
+            </article>
+            <div class="chat-thread" id="chat-thread"></div>
+            <div class="route-card">
+              <i data-lucide="navigation"></i>
+              <div>
+                <strong>帮我去图书馆咖啡厅</strong>
+                <span>预计步行 4 分钟，空位充足。</span>
+              </div>
+              <button class="icon-btn green" type="button"><i data-lucide="arrow-right"></i></button>
+            </div>
+          </section>
+
+          <section class="screen" data-screen="notifications">
+            <h2 class="page-title">通知中心</h2>
+            <p class="lead-copy">及时获取食堂状态和订单更新。</p>
+            <div class="notice-list" id="notice-list"></div>
+            <article class="settings-panel">
+              <h3>通知设置</h3>
+              <p>选择您希望接收的提醒内容和方式。</p>
+              <button class="primary-button" type="button">管理设置</button>
+            </article>
+          </section>
+
+          <section class="screen" data-screen="profile">
+            <article class="profile-card">
+              <div class="avatar-large">1</div>
+              <p class="section-kicker">周餐系统</p>
+              <h2>周概览</h2>
+              <div class="quick-grid two">
+                <article><span>平均等待时间</span><strong>4分钟</strong></article>
+                <article><span>评价总数</span><strong>12条</strong></article>
+              </div>
+            </article>
+            <div class="profile-grid">
+              <button data-route-target="canteen" type="button"><i data-lucide="utensils"></i><span>最爱食堂</span><strong>少食堂</strong></button>
+              <button type="button"><i data-lucide="wallet"></i><span>余额</span><strong>$42.50</strong></button>
+              <button type="button"><i data-lucide="history"></i><span>历史</span><strong>24次用餐</strong></button>
+              <button type="button"><i data-lucide="settings"></i><span>设置</span><strong>个人资料</strong></button>
+            </div>
+          </section>
+
+          <nav class="bottom-nav" aria-label="底部导航">
+            <button class="bottom-item is-active" data-route="home" type="button">
+              <i data-lucide="home"></i>
+              <span>首页</span>
+            </button>
+            <button class="bottom-item" data-route="map" type="button">
+              <i data-lucide="map"></i>
+              <span>地图</span>
+            </button>
+            <button class="bottom-item" data-route="feed" type="button">
+              <i data-lucide="messages-square"></i>
+              <span>动态</span>
+            </button>
+            <button class="bottom-item" data-route="people" type="button">
+              <i data-lucide="users"></i>
+              <span>人群</span>
+            </button>
+            <button class="bottom-item" data-route="stats" type="button">
+              <i data-lucide="bar-chart-3"></i>
+              <span>统计</span>
+            </button>
+          </nav>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
